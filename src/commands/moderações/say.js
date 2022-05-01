@@ -22,21 +22,18 @@ module.exports = class extends Command {
         })
     }
 
-    run = async (interaction) => {
+    run = (interaction) => {
         if(!interaction.isCommand()) return
+        this.getResponseMessaging(interaction)
+    }
+
+    getResponseMessaging(interaction) {
         const texto = interaction.options.getString('mensagem')
-        this.getResponseMessaging(interaction, texto)
+        const canal = interaction.options.getChannel('canal')
+        canal.send({content: texto}).then(() => this.getResponseInteractionReply(interaction, 'Mensagem enviada!', true))
     }
 
-    getResponseMessaging(interaction, message) {
-        return interaction.reply(message)
-    }
-
-    getResponseError(interaction){
-        return interaction.reply({content: 'ERROR - Informe um canal de texto', ephemeral: true})
-    }
-
-    isValidCommand(canal){
-        return ['GUILD_TEXT', 'GUILD_ANNOUCEMENTS'].includes(canal.type)
-    }
+    getResponseInteractionReply(interaction, message, ephemeral) {
+        return interaction.reply({content: message, ephemeral})
+    } 
 }
