@@ -1,7 +1,9 @@
+import { ClientEvents, CommandInteraction } from "discord.js"
+
 const Command = require('../../structures/Command')
 
 module.exports = class extends Command {
-    constructor(client) {
+    constructor(client: ClientEvents) {
         super(client, {
             name: 'say',
             description: 'Faz com que o bot envie uma mensagem',
@@ -22,18 +24,18 @@ module.exports = class extends Command {
         })
     }
 
-    run = (interaction) => {
+    run = (interaction: CommandInteraction) => {
         if(!interaction.isCommand()) return
         this.getResponseMessaging(interaction)
     }
 
-    getResponseMessaging(interaction) {
+    getResponseMessaging(interaction: CommandInteraction) {
         const texto = interaction.options.getString('mensagem')
-        const canal = interaction.options.getChannel('canal')
+        const canal = interaction.options.getChannel('canal') as any
         canal.send({content: texto}).then(() => this.getResponseInteractionReply(interaction, 'Mensagem enviada!', true))
     }
 
-    getResponseInteractionReply(interaction, message, ephemeral) {
+    getResponseInteractionReply(interaction: CommandInteraction, message: string, ephemeral: boolean) {
         return interaction.reply({content: message, ephemeral})
     } 
 }

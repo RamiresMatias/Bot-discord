@@ -1,9 +1,12 @@
-const {Client} = require('discord.js')
+import { ClientOptions, Client } from "discord.js"
+
 const {readdirSync} = require('fs')
 const {join} = require('path')
 
-module.exports = class Cliente extends Client {
-    constructor(options) {
+export class Cliente extends Client {
+    private commands: any[]
+
+    constructor(options: ClientOptions) {
         super(options)
 
         this.commands = []
@@ -14,12 +17,11 @@ module.exports = class Cliente extends Client {
     // Método que registra os comandos criados em todos os servidores
     // em que o bot foi criado
     registerCommands() {
-        this.guilds.cache.get('598345090188050442').commands.set(this.commands)
-        // this.application.commands.set(this.commands)
+        this.guilds.cache.get('598345090188050442')?.commands.set(this.commands)
     }
 
     // Método para carregar todos comandos
-    loadCommands(path) {
+    loadCommands(path: string) {
         const categories = readdirSync(path)
 
         for (const category of categories) {
@@ -36,7 +38,7 @@ module.exports = class Cliente extends Client {
     }
 
     // Método para carregar todos eventos
-    loadEvents(path) {
+    loadEvents(path: string) {
         const filesEvents = readdirSync(path)
 
         for (const fileEvent of filesEvents) {

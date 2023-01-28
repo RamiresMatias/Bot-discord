@@ -1,7 +1,9 @@
+import { ClientEvents } from "discord.js"
+
 const Event = require('../../structures/Event')
 
 module.exports = class extends Event {
-    constructor(client) {
+    constructor(client: ClientEvents) {
         super(client, {
             name: 'ready'
         })
