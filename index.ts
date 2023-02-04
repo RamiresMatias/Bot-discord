@@ -1,12 +1,13 @@
 require('dotenv').config()
-import { Intents } from 'discord.js'
+import { Player } from 'discord-player'
+import { GatewayIntentBits } from 'discord.js'
 import {Cliente} from './src/structures/Client'
 
 const client = new Cliente({
     intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_VOICE_STATES,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildVoiceStates,
     ]
 })
 

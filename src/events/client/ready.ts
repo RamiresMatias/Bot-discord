@@ -1,9 +1,9 @@
-import { ClientEvents } from "discord.js"
+import { Cliente } from "src/structures/Client"
 
-const Event = require('../../structures/Event')
+import {Event} from '../../structures/Event'
 
-module.exports = class extends Event {
-    constructor(client: ClientEvents) {
+export default class extends Event {
+    constructor(client: Cliente) {
         super(client, {
             name: 'ready'
         })
@@ -15,7 +15,7 @@ module.exports = class extends Event {
     }
 
     getNameBot(){
-        return this.client.user.username
+        return this.client?.user?.username
     }
 
     countServersBotInstalled() {

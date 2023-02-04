@@ -1,9 +1,9 @@
-import { ClientEvents, CommandInteraction } from "discord.js"
+import { CommandInteraction, InteractionType } from "discord.js"
 
-const Event = require('../../structures/Event')
+import {Event} from '../../structures/Event'
 
-module.exports = class extends Event {
-    constructor(client: ClientEvents) {
+export default class extends Event {
+    constructor(client: any) {
         super(client, {
             name: 'interactionCreate'
         })
@@ -12,8 +12,9 @@ module.exports = class extends Event {
     // Função que retorna callback que irá verificar a interação no servidor
     // e responder de acordo com a lista de comandos
     run = (interaction: CommandInteraction) => {
-        if(interaction.isCommand()){
-            const cmd = this.client.commands.find((cc: any) => cc.name === interaction.commandName)
+        if(interaction.type === InteractionType.ApplicationCommand){
+            const commands = this.client.commands as any
+            const cmd = commands.find((cc: any) => cc.name === interaction.commandName)
             if(!cmd) return
             cmd.run(interaction)
         }

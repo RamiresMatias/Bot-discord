@@ -17,7 +17,7 @@
     "@discordjs/voice": "^0.14.0",
     "discord-api-types": "^0.37.30",
     "discord-player": "^5.4.0",
-    "discord.js": "^13.6.0",
+    "discord.js": "^14.7.1",
     "dotenv": "^16.0.0",
     "ytdl-core": "^4.11.2"
   },
