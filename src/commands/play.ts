@@ -1,6 +1,10 @@
 import { ApplicationCommandOptionType } from "discord-api-types/v10";
 import { QueryType } from "discord-player";
-import { GuildChannelResolvable, GuildResolvable, Message } from "discord.js";
+import {
+  CommandInteraction,
+  GuildMember,
+  GuildResolvable,
+} from "discord.js";
 import { Cliente } from "src/structures/Client";
 import ytdl from "ytdl-core";
 
@@ -22,42 +26,62 @@ export default class extends Command {
     });
   }
 
-  async run(interaction: Message) {
-    const voiceChannel = interaction.member?.voice.channel
-    // if (!voiceChannel)
-    //   interaction.reply(
-    //     "Você precisa estar em um canal de voz para dar play na música!"
-    //   );
+  async run(interaction: CommandInteraction) {
+    try {
 
-    const permissions = voiceChannel?.permissionsFor(interaction.client.user as any)
+      const voiceChannel = (interaction.member as GuildMember).voice.channel;
 
-    // if (!permissions?.has("CONNECT") || !permissions.has("SPEAK")) {
-    //   return interaction.reply("Você não possui permissão para pedir música HAHAHA!")
-    // }
+      if (!voiceChannel) return await interaction.reply("Você não está em um canal de voz!");
 
-    const queue = await this.client.player.createQueue(interaction.guild as GuildResolvable, {metadata: {channel: interaction.channel}})
+      
+      const queue = this.client.player.createQueue(interaction.guild as GuildResolvable,
+        {
+          metadata: { channel: interaction.channel },
+          ytdlOptions: {
+            filter: "audioonly",
+            highWaterMark: 1 << 30,
+            dlChunkSize: 0,
+          },
+          initialVolume: 100,
+        }
+      );
 
-    console.log(interaction.member?.voice);
-    // if(!queue.connection) await queue.connect(interaction.member?.voice.channel as GuildChannelResolvable)
-    // console.log('CCCCCCCCCCC');
-    // const query = (interaction as any).options.get("url")
+      try {
+        if (!queue.connection) await queue.connect((interaction.member as GuildMember).voice.channel as any);
+      } catch (error) {
+        queue.destroy();
+        return await interaction.reply({content: `Não consigo entrar no canal, tente novamente!`, ephemeral: true});
+      }
 
-    // const {videoDetails} = await ytdl.getInfo(query)
+      const query = interaction.options.get("url");
+      
+      const { videoDetails } = await ytdl.getInfo(query?.value as string);
 
-    // const track = await this.client.player.search(videoDetails.video_url, {
-    //   requestedBy: (interaction as any).user,
-    //   searchEngine: QueryType.YOUTUBE_VIDEO
-    // }).then(x => {
-    //   console.log(x);
-    //   x.tracks[0]
-    // })
+      const searchResult = await this.client.player
+        .search(videoDetails.video_url, {
+          requestedBy: interaction.user,
+          searchEngine: QueryType.AUTO,
+        })
+        .catch(() => {});
 
-    // console.log(track);
+      if (!searchResult || !searchResult.tracks.length)
+        return await interaction.reply({
+          content: "Música não encontrada!",
+        });
 
-    // // if(!track) return interaction.reply({content: 'Música não encontrada!'})
+      searchResult.playlist
+        ? queue.addTracks(searchResult.tracks)
+        : queue.addTrack(searchResult.tracks[0]);
 
-    // // queue?.play(track)
+      if (!queue.playing) await queue.play();
 
-    // interaction.reply({content: 'AAAAAA'})
+      return await interaction.reply({content: `Tocando ${queue.current.title}`, ephemeral: true})
+
+    } catch (error) {
+      return await interaction.reply({
+        content:
+          "Ocorreu um erro ao tentar executar o comando de /play: " + error,
+      });
+    }
   }
 }

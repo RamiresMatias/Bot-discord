@@ -14,6 +14,7 @@ export default class extends Event {
     run = (interaction: CommandInteraction) => {
         if(interaction.type === InteractionType.ApplicationCommand){
             const commands = this.client.commands as any
+            
             const cmd = commands.find((cc: any) => cc.name === interaction.commandName)
             if(!cmd) return
             cmd.run(interaction)

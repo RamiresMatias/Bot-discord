@@ -1,12 +1,12 @@
 import { Player } from "discord-player"
-import { ApplicationCommandDataResolvable } from "discord.js"
+import { ApplicationCommandDataResolvable, SlashCommandBuilder } from "discord.js"
 import { ClientOptions, Client } from "discord.js"
 
 const {readdirSync} = require('fs')
 const {join} = require('path')
 
 export class Cliente extends Client {
-    public commands: ApplicationCommandDataResolvable[]
+    public commands: SlashCommandBuilder[]
     public player: Player = new Player(this)
 
     constructor(options: ClientOptions) {
