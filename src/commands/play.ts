@@ -26,7 +26,7 @@ export default class extends Command {
     });
   }
 
-  async run(interaction: CommandInteraction) {
+  async execute(interaction: CommandInteraction) {
     try {
 
       const voiceChannel = (interaction.member as GuildMember).voice.channel;
@@ -73,10 +73,9 @@ export default class extends Command {
         ? queue.addTracks(searchResult.tracks)
         : queue.addTrack(searchResult.tracks[0]);
 
-      if (!queue.playing) await queue.play();
+      if (!queue.playing && (queue.current.url === query?.value)) await queue.play();
 
       return await interaction.reply({content: `Tocando ${queue.current.title}`, ephemeral: true})
-
     } catch (error) {
       return await interaction.reply({
         content:

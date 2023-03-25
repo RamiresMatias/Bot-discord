@@ -9,9 +9,9 @@ export default class extends Event {
         })
     }
 
-    run = () => {
+    run = async () => {
         console.log(`Bot ${this.getNameBot()} logado! - Servidores: ${this.countServersBotInstalled()}`)
-        this.client.registerCommands()
+        await this.client.registerCommands()
     }
 
     getNameBot(){

@@ -5,24 +5,22 @@ import { Command } from "../structures/Command";
 export default class extends Command {
   constructor(client: Cliente) {
     super(client, {
-      name: "skip first",
-      description: "Remove a primeira música da fila",
+      name: "skip",
+      description: "Faz o bot sair do canal",
       options: []
     });
   }
 
-  async run(interaction: CommandInteraction) {
-
+  async execute(interaction: CommandInteraction) {
     const voiceChannel = (interaction.member as GuildMember).voice.channel;
 
     if (!voiceChannel) interaction.reply("Você não está em um canal de voz!");
 
     const queue = this.client.player.getQueue(interaction.guild as GuildResolvable)
 
-    if(queue?.tracks.length === 0) interaction.reply({content: 'A fila está vazia!', ephemeral: true})
-
-    const current = queue?.current
-    queue?.skip()
-    return interaction.reply({content: `Música removida ${current?.title}`, ephemeral: true})
+    if(!queue || !queue?.connection) return interaction.reply({content: 'Não estou conectado em nenhum canal', ephemeral: true})
+    
+    queue.destroy()
+    return interaction.reply({content: 'Saindo...', ephemeral: true})
   }
 }

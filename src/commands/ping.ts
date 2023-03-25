@@ -11,10 +11,10 @@ export default class extends Command {
     });
   }
 
-  run = (interaction: CommandInteraction) => {
+  execute (interaction: CommandInteraction) {
     interaction.reply({
       content: `O ping do bot é: ${this.client.ws.ping} ms`,
-      ephemeral: true, //Mensagem do comando irá aparecer somente para quem digitou
+      ephemeral: true
     });
   };
 }
