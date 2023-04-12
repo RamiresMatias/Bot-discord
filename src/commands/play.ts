@@ -55,6 +55,8 @@ export default class extends Command {
 
       const query = interaction.options.get("url");
       
+      await interaction.deferReply({ephemeral: true})
+
       const { videoDetails } = await ytdl.getInfo(query?.value as string);
 
       const searchResult = await this.client.player
@@ -73,9 +75,14 @@ export default class extends Command {
         ? queue.addTracks(searchResult.tracks)
         : queue.addTrack(searchResult.tracks[0]);
 
-      if (!queue.playing && (queue.current.url === query?.value)) await queue.play();
+      let message = `Música adicionada a fila!`
+        
+      if (!queue.playing && queue.previousTracks.length === 0) {
+        message = `Tocando: ${queue.current.title}`
+        await queue.play()
+      }
 
-      return await interaction.reply({content: `Tocando ${queue.current.title}`, ephemeral: true})
+      await interaction.followUp({content: message})
     } catch (error) {
       return await interaction.reply({
         content:
