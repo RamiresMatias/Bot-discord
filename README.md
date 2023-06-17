@@ -1,19 +1,38 @@
 ## Descrição
 
-- Bot criado com javascript, seguindo a documentação do link abaixo:
+- Bot criado com typescript, seguindo a documentação do link abaixo:
 
 > https://discordjs.guide/interactions/replying-to-slash-commands.html#receiving-interactions
 
-- É um projeto básico para aprendizado de criação de bots com javascript
+> https://discord-player.js.org/
+
+- É um projeto básico para aprendizado de criação de bots com typescript
 
 ## Bibliotecas utilizadas
 
 - Discord.js
 - Dontenv
+- Discord Player
+- ffmpeg-static
+- ytdl-core
+
+#### Dependências utilizadas pelo Discord Player 
+
+- @discord/voice
+- @discord/opus
+- @discord/builders
+- @discord/rest
 
 ## Observações
 
-- O bot ainda não realiza nenhuma ação, os demais comandos serão configurados nos commits futuros
+- O bot só tem os seguintes comandos 
+  - /play - Toca uma música
+  - /pause - Pausa a música
+  - /resume - Despausa a música
+  - /playlist - Exibe a fila de músicas
+  - /skip - Força o bot a sair do canal de voz
+  - /next - Força o bot a tocar a próxima música
+  - /ping - Exibe o ping do bot
 
 - O bot está sendo criado em um discord pessoal.
 
@@ -22,11 +41,13 @@
 - Para startar o bot localmente utilize o comando
 
 ```bash
-node .
+npm run dev
 ```
 
-- Criar um arquivo DOTENV contendo a propriedade BOT_TOKEN com o valor do token do bot criado no discord.
+- Criar um arquivo DOTENV contendo as seguintes propriedades. Suas informações estarão no portal do discord developer
 
 ```.env
 BOT_TOKEN=<TOKEN>
+SERVER_ID=<SERVER_ID>
+CLIENT_SECRET=<CLIENT_SECRET>
 ```
