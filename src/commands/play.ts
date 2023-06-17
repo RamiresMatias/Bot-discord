@@ -78,11 +78,11 @@ export default class extends Command {
       let message = `Música adicionada a fila!`
         
       if (!queue.playing && queue.previousTracks.length === 0) {
-        message = `Tocando: ${queue.current.title}`
+        message = `Tocando: ${queue.current.title} \n Link: ${videoDetails.video_url}`
         await queue.play()
       }
 
-      await interaction.followUp({content: message})
+      await interaction.editReply({content: message})
     } catch (error) {
       return await interaction.reply({
         content:
