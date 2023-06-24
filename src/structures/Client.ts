@@ -1,5 +1,5 @@
-import { Player } from "discord-player"
-import { SlashCommandBuilder } from "discord.js"
+import { Player, Queue } from "discord-player"
+import { SlashCommandBuilder, VoiceState } from "discord.js"
 import { ClientOptions, Client } from "discord.js"
 
 const {readdirSync} = require('fs')
@@ -14,7 +14,8 @@ export class Cliente extends Client {
 
         this.commands = []
         this.loadCommands('src/commands')
-        this.loadEvents('src/events/client')
+        this.loadEventsClient('src/events/client')
+        this.loadEventsPlayer('src/events/player')
     }
 
     // Método que registra os comandos criados em todos os servidores
@@ -39,12 +40,21 @@ export class Cliente extends Client {
 
 
     // Método para carregar todos eventos
-    loadEvents(path: string) {
+    loadEventsClient(path: string) {
         const events = readdirSync(path)
         for(const event of events) {
             const eventClass = require(join(process.cwd(), `${path}/${event}`))
             const evt = new (eventClass.default)(this)
             this.on(evt.name, evt.run)
+        }
+    }
+
+    loadEventsPlayer(path: string) {
+        const events = readdirSync(path)
+        for(const event of events) {
+            const eventClass = require(join(process.cwd(), `${path}/${event}`))
+            const evt = new (eventClass.default)(this)
+            this.player.on(evt.name, evt.run)
         }
     }
 }

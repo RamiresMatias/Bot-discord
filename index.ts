@@ -1,7 +1,7 @@
 require('dotenv').config()
 import { VoiceConnectionStatus } from '@discordjs/voice';
 import {Cliente} from './src/structures/Client'
-import { Queue } from 'discord-player';
+import { PlayerEvents, Queue } from 'discord-player';
 
 const client = new Cliente({
     intents: [

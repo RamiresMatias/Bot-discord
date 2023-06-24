@@ -12,6 +12,9 @@ export default class extends Command {
   }
 
   async execute(interaction: CommandInteraction) {
+    this.client.player.off('trackEnd', () => {
+      console.log('stop event');
+    })
     const voiceChannel = (interaction.member as GuildMember).voice.channel;
 
     if (!voiceChannel) interaction.reply("Você não está em um canal de voz!");
@@ -20,7 +23,11 @@ export default class extends Command {
 
     await interaction.deferReply({ephemeral: true})
 
-    if(queue?.tracks.length) await queue.forceNext()
+    if(queue?.tracks.length) {
+      await queue.forceNext()
+    } else {
+      queue?.clear()
+    }
     return interaction.editReply("Ok")
   }
 }
