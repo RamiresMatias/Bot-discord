@@ -18,10 +18,10 @@ export default class extends Command {
 
       const queue = this.client.player.getQueue(interaction.guild as GuildResolvable)
 
-      if((!queue?.tracks || !queue?.tracks.length) && !queue?.previousTracks.length) 
+      if((!queue?.tracks || !queue?.tracks.length) && !queue?.current) 
         return interaction.reply({content: 'A fila está vazia!', ephemeral: true})
 
-      const previousTrack = `\n Tocando agora: ${queue.previousTracks[0]?.title} \n`
+      const previousTrack = `\n Tocando agora: ${queue.current.title} \n`
       const content = queue?.tracks.reduce((acc, music, index) => {
         acc += `\n ${(index + 1)}: ${music.title}\n`
         return acc

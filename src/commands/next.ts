@@ -12,9 +12,6 @@ export default class extends Command {
   }
 
   async execute(interaction: CommandInteraction) {
-    this.client.player.off('trackEnd', () => {
-      console.log('stop event');
-    })
     const voiceChannel = (interaction.member as GuildMember).voice.channel;
 
     if (!voiceChannel) interaction.reply("Você não está em um canal de voz!");
