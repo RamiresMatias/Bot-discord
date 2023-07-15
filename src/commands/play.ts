@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType } from "discord-api-types/v10";
-import { QueryType } from "discord-player";
+import { QueryType, Track } from "discord-player";
 import {
   CommandInteraction,
   GuildMember,
@@ -33,18 +33,7 @@ export default class extends Command {
 
       if (!voiceChannel) return await interaction.reply("Você não está em um canal de voz!");
 
-      
-      const queue = this.client.player.createQueue(interaction.guild as GuildResolvable,
-        {
-          metadata: { channel: interaction.channel },
-          ytdlOptions: {
-            filter: "audioonly",
-            highWaterMark: 1 << 30,
-            dlChunkSize: 0,
-          },
-          initialVolume: 100,
-        }
-      );
+      const queue = await this.getQueueOrCreate(interaction)
 
       try {
         if (!queue.connection) await queue.connect((interaction.member as GuildMember).voice.channel as any);
@@ -53,32 +42,27 @@ export default class extends Command {
         return await interaction.reply({content: `Não consigo entrar no canal, tente novamente!`, ephemeral: true});
       }
 
-      const query = interaction.options.get("url");
+      const {value: query} = interaction.options.get("url", true)
       
       await interaction.deferReply({ephemeral: true})
 
-      const { videoDetails } = await ytdl.getInfo(query?.value as string);
-
       const searchResult = await this.client.player
-        .search(videoDetails.video_url, {
+        .search((query as string), {
           requestedBy: interaction.user,
           searchEngine: QueryType.AUTO,
         })
-        .catch(() => {});
 
       if (!searchResult || !searchResult.tracks.length)
-        return await interaction.reply({
-          content: "Música não encontrada!",
-        });
+        return await interaction.reply({ content: "Música não encontrada!"})
 
       searchResult.playlist
         ? queue.addTracks(searchResult.tracks)
         : queue.addTrack(searchResult.tracks[0]);
 
-      let message = `Música adicionada a fila!`
+      let message = `Música adicionada a fila - Posição ${(queue.getTrackPosition(searchResult.tracks.at(-1) as Track) + 1)}`
         
       if (!queue.playing && queue.previousTracks.length === 0) {
-        message = `Tocando: ${queue.current.title} \n Link: ${videoDetails.video_url}`
+        message = `Tocando: ${queue.current.title} \n`
         await queue.play()
       }
 
@@ -89,5 +73,20 @@ export default class extends Command {
           "Ocorreu um erro ao tentar executar o comando de /play: " + error,
       });
     }
+  }
+
+  async getQueueOrCreate(interaction: CommandInteraction) {
+    return this.client.player.getQueue(interaction.guild as GuildResolvable) 
+    || this.client.player.createQueue(interaction.guild as GuildResolvable,
+      {
+        metadata: { channel: interaction.channel },
+        ytdlOptions: {
+          filter: "audioonly",
+          highWaterMark: 1 << 30,
+          dlChunkSize: 0,
+        },
+        initialVolume: 100,
+      }
+    );
   }
 }

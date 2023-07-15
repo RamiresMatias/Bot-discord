@@ -5,8 +5,8 @@ import { Command } from "../structures/Command";
 export default class extends Command {
   constructor(client: Cliente) {
     super(client, {
-      name: "playlist",
-      description: "Mostra as músicas na playlist!",
+      name: "queue",
+      description: "Mostra as músicas da fila!",
     })
 
   }
@@ -21,13 +21,13 @@ export default class extends Command {
       if((!queue?.tracks || !queue?.tracks.length) && !queue?.current) 
         return interaction.reply({content: 'A fila está vazia!', ephemeral: true})
 
-      const previousTrack = `\n Tocando agora: ${queue.current.title} \n`
-      const content = queue?.tracks.reduce((acc, music, index) => {
-        acc += `\n ${(index + 1)}: ${music.title}\n`
+      const currentTrack = `\n Tocando agora: ${queue.current.title} \n`
+      const content = queue?.tracks.reduce((acc, track) => {
+        acc += `\n ${(queue.getTrackPosition(track) + 1)}: ${track.title}\n`
         return acc
       }, '')
 
-      const result = previousTrack + content
+      const result = currentTrack + content
 
       return await interaction.reply({content: result, ephemeral: true})
     } catch (error) {

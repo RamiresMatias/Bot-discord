@@ -5,10 +5,9 @@ import { Command } from "../structures/Command";
 export default class extends Command {
   constructor(client: Cliente) {
     super(client, {
-      name: "next",
-      description: "Força a próxima música a tocar!",
+      name: "clear",
+      description: "Limpa a fila de músicas!",
     })
-
   }
 
   async execute(interaction: CommandInteraction) {
@@ -20,11 +19,8 @@ export default class extends Command {
 
     await interaction.deferReply({ephemeral: true})
 
-    if(queue?.tracks.length) {
-      await queue.forceNext()
-    } else {
-      queue?.clear()
-    }
-    return interaction.editReply(`Próxima: ${queue?.current.title}`)
+    queue?.clear()
+    
+    return interaction.editReply(`Músicas removidas da fila!`)
   }
 }
